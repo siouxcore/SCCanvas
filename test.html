@@ -4,12 +4,16 @@
 </head>
 <body>
 <script type="text/javascript">
-SCC.init({
+var param_init = {
   id: "canvas-test",
   width: 600,
   height: 400,
   framerate: 30
-});
+};
+var param_add = {
+  el: {id:"0"}
+};
+SCC.init(param_init).add(param_add);
 </script>
 </body>
 </html>
