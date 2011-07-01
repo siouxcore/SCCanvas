@@ -11,8 +11,15 @@ var param_init = {
   framerate: 30
 };
 var param_add = {
-  el: {id:"0"}
-};
+		  elt: [
+		    {mask: [{x:50, y:50}, {x:150, y:50}, {x:50, y:150}]},
+		    {mask: [{x:75, y:75}, {x:175, y:75}, {x:75, y:175}]},
+		    {mask: [{x:50, y:50}, {x:75, y:75}]},
+		    {mask: [{x:150, y:50}, {x:175, y:75}]},
+		    {mask: [{x:50, y:150}, {x:75, y:175}]},
+		    {mask: {center: {x:200,y:200}, radius: 20}}
+		  ]
+		};
 SCC.init(param_init).add(param_add);
 </script>
 </body>
