@@ -1,0 +1,44 @@
+<html>
+<head>
+<script type="text/javascript" src="../sccanvas.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+var param_init = {
+  id: "canvas-test",
+  width: 600,
+  height: 400,
+  millisec: 20
+};
+
+var param_add = {
+  elt: [
+    {mask: [{x:50, y:50}, {x:150, y:50}, {x:50, y:150}]},
+    {mask: [{x:75, y:75}, {x:175, y:75}, {x:75, y:175}]},
+    {mask: [{x:50, y:50}, {x:75, y:75}]},
+    {mask: [{x:150, y:50}, {x:175, y:75}]},
+    {mask: [{x:50, y:150}, {x:75, y:175}]},
+    {
+      color: 'red',
+      mask: {center: {x:200,y:200}, radius: 20},
+      mousein: function(step){this.mask.radius = 20 + step; return step < 10},
+      mouseout: function(){this.mask.radius = 20;},
+      click: function(){this.color = this.color === 'black' ? 'red' : 'black';},
+      draw: function(c){
+        c.beginPath();
+        c.fillStyle = this.color;
+        c.arc(this.mask.center.x, 
+                  this.mask.center.y, 
+                  this.mask.radius, 
+                  0, Math.PI*2, true);
+        c.closePath();
+        c.fill();
+      }
+    }
+  ]
+};
+
+SCC.init(param_init).add(param_add);
+</script>
+</body>
+</html>
