@@ -7,13 +7,14 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110706.1
+* version : 0.1.20110706.2
 * change :  remove function : added
 *           find function : added
 *           bang function :added
 *           release function : correction
 *           __functions
 *           defaultDraw function : adding stroke & fill & strokeWeight management
+* change (2) : draw function : z sort           
 **/
 (function (){
 
@@ -304,7 +305,7 @@
       for(var id in this.elements){
         sortedElements.push(this.elements[ id ]);
       }
-      sortedElements.sort(function(a,b){ return a.z - b.z; });
+      sortedElements.sort(function(a,b){ return (a.z - b.z) == 0 ? a.id.localeCompare(b.id) : (a.z - b.z); });
       // draw
       for(var sortedId in sortedElements){
         if(sortedElements[ sortedId ].draw && typeof sortedElements[ sortedId ].draw === 'function'){

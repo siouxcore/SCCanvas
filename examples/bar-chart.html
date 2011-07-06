@@ -20,13 +20,13 @@ var param_init = {
 
 // a data set
 var datas = [
-  { val: 50 },
-  { val: 80 },
-  { val: 13 },
-  { val: 40 },
-  { val: 20 }, 
-  { val: 70 },
-  { val: 38 }  
+  { val: 50, id: "0" },
+  { val: 80, id: "1" },
+  { val: 13, id: "2" },
+  { val: 53, id: "3" },
+  { val: 20, id: "4" }, 
+  { val: 40, id: "5"},
+  { val: 38, id: "6" }  
 ];
 
 // we want a marge of 10 px between top bottom left right and each bar
@@ -49,6 +49,7 @@ for(ind in datas){
       fill: 'white',
       stroke: 'black',
       strokeWeight: 1,
+      id: data.id,
       mask: [ 
         {x: posx  ,y: 500},
         {x: posx + w_bar,y: 500},
@@ -81,7 +82,27 @@ for(ind in datas){
 }
 
 SCC.init(param_init).add({elt:param_add}).bang({event: "grow"});
+
+var count = 0;
+
+function sortDatas(){
+	datas.sort(function(a,b){ return count % 2 == 0 ? a.val - b.val : a.id - b.id });
+	count++;
+	for(ind in datas){
+		data = datas[ ind ];
+		var elt = SCC.find(data);
+		elt.difpos = marge + (ind * marge) + (ind * w_bar) - elt.mask[0].x;
+		elt.sortEvent = function(step){
+			for(var i = 0; i < 4; i++){
+				this.mask[i].x += this.difpos / 50; 
+			}
+			return step < 50;
+		};
+	}
+};
+
 </script>
-<p style="font-size:80px; position: absolute; top: 0; left: 80%;" id="val-bar"></p>
+<p style="font-size:80px; position: absolute; top: 0; left: 350px;" id="val-bar"></p>
+<button onclick="sortDatas(); SCC.bang({event: 'sortEvent'});">sort data</button>
 </body>
 </html>
