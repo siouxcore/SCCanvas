@@ -1,0 +1,87 @@
+<html>
+<head>
+<script type="text/javascript" src="../sccanvas.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+// helper, we need a map function
+function map(value, istart, istop, ostart, ostop){
+  return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+};
+
+// init parameters
+var param_init = {
+  id: "canvas-test",
+  width: 300,
+  height: 500,
+  millisec: 20
+};
+
+// a data set
+var datas = [
+  { val: 50 },
+  { val: 80 },
+  { val: 13 },
+  { val: 40 },
+  { val: 20 }, 
+  { val: 70 },
+  { val: 38 }  
+];
+
+// we want a marge of 10 px between top bottom left right and each bar
+var marge = 10;
+var w = param_init.width - 2*marge;
+var w_bar = ( w - (datas.length - 1) * marge ) / datas.length; // width of a single bar
+
+// we built the objects from the datas
+var param_add = [];
+for(ind in datas){
+  var data = datas[ ind ];
+  // we calculate the position of the current bar
+  var posx = marge 
+    + (ind * marge) // space
+    + (ind * w_bar);
+  param_add.push(
+    {
+      val: map(data.val, 0, 80, 0 + marge, 500 - marge ),
+      libelle: data.val.toString(),
+      fill: 'white',
+      stroke: 'black',
+      strokeWeight: 1,
+      mask: [ 
+        {x: posx  ,y: 500},
+        {x: posx + w_bar,y: 500},
+        {x: posx + w_bar,y: 500},
+        {x: posx,y: 500}
+      ], // at the origin, our mask is flat, it grows when the grow function is banged
+      grow: function(step){ // we need a function 
+        // we want our bar to grow during 60 step
+        var ny = 500 - (step * this.val) / 60;
+        this.mask[0].y = ny;
+        this.mask[1].y = ny;
+        return step < 60;
+      },
+      mousein: function(){
+        document.getElementById("val-bar").textContent = this.libelle;
+        this.fill = 'rgb(250,0,0)';
+        this.strokeWeight = 10;
+      },
+      mouseout: function(step){
+        if(step == 0 && document.getElementById("val-bar").textContent === this.libelle){
+            document.getElementById("val-bar").textContent = "";
+        }
+        var oc = Math.floor(map(step, 0, 20, 0, 250));
+        this.fill = 'rgb(250,' + oc.toString() + ',' + oc.toString() + ')';
+        this.strokeWeight = 10 - Math.floor(map(step, 0, 20, 1, 10));
+        return oc < 250;
+      }
+    }
+  );
+}
+
+SCC.init(param_init).add({elt:param_add}).bang({event: "grow"});
+</script>
+<p style="font-size:100px;" id="val-bar"></p>
+</body>
+</html>

@@ -7,36 +7,23 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110705.3
-* change :  attach function : added
-*           init function : event management
-*           eventManager function : added
-*           mouseOut function : added
-*           mouseX, mouseY, pmouseX, pmouseY attributes : added
-*           mousePressed, mouseDragged attributes : added
-*           hoveredId, dragedId, rendering attributes : added
-*           dist function : added
-*           intersect function : added
-*           targetMouse function : added
-*           click function : added
-*           mousein function : added
-*           mouseout function : added
-*           drag function : added
-*           release function : added
-*           render function : managed outside SCC
-* change (2) :  code optimizations
-*               framrate param replaced by millisec
-* change (3) : drag correction
+* version : 0.1.20110706.1
+* change :  remove function : added
+*           find function : added
+*           bang function :added
+*           release function : correction
+*           __functions
+*           defaultDraw function : adding stroke & fill & strokeWeight management
 **/
 (function (){
 
   /**
-  * function attach - from processing.js
+  * function __attach - from processing.js
   * @elem
   * @type
   * @fn
   */
-  function attach(elem, type, fn) {
+  function __attach(elem, type, fn) {
     if (elem.addEventListener) {
       elem.addEventListener(type, fn, false);
     } else {
@@ -44,10 +31,10 @@
     }
   };
   /**
-  * function eventManager 
+  * function __eventManager 
   * @e : event
   */
-  function eventManager(e){
+  function __eventManager(e){
     if(e.type == "mousemove"){ 
       var element = this;
       var offsetX = 0, offsetY = 0;
@@ -86,10 +73,10 @@
     } 
   };  
   /**
-  * function mouseOut
+  * function __mouseOut
   * @e : event
   */
-  function mouseOut(e){
+  function __mouseOut(e){
     var rend = false;
     if(this.SCC.dragedId != ""){
       var ds = this.SCC.elements[ this.SCC.dragedId ];
@@ -109,14 +96,14 @@
     }
     this.SCC.mouseDraged = false;
     this.SCC.mousePressed = false;
-    rend && render(false, this.SCC);
+    rend && __render(false, this.SCC);
   };  
   /**
-  * function render
+  * function __render
   * @force : force rendering
   * @c : SCC instance
   */
-  function render(force, c){
+  function __render(force, c){
     if(force == false && c.rendering == false){  // on est pas deja en train de rendre
       var looping = window.setInterval(function(){
         c.rendering = true;
@@ -140,7 +127,6 @@
     millisec: 0,
     elements: {},
     numrend: 0,
-    rendering: false,
     eventQ: {
       click: {},
       rclick: {},
@@ -192,10 +178,10 @@
           this.millisec = param.millisec;
       }
       // event management
-      attach(this.canvas, "mousemove", eventManager);
-      attach(this.canvas, "mouseout", mouseOut);    
-      attach(this.canvas, "mouseup", eventManager);
-      attach(this.canvas, "mousedown", eventManager);       
+      __attach(this.canvas, "mousemove", __eventManager);
+      __attach(this.canvas, "mouseout", __mouseOut);    
+      __attach(this.canvas, "mouseup", __eventManager);
+      __attach(this.canvas, "mousedown", __eventManager);       
       // chaining pattern, return this
       return this;
     },
@@ -228,7 +214,50 @@
         if(!newE.id || typeof newE.id !== 'string') newE.id = (this.genId++).toString();// id
         this.elements[ newE.id ] = newE;
       }
-      return (r ? render(true, this) : this);
+      return (r ? __render(true, this) : this);
+    },
+    /**
+    * removing element(s) in the renderer queue
+    * @id 
+    **/    
+    remove: function(param){
+      for(var ev in this.eventQ){
+        for(id in this.eventQ[ev]){
+          if(sh == param.id){
+            delete this.eventQ[ev][id];
+          }
+        }
+      }
+      delete this.elements[ param.id ];
+      return __render(true, this);    
+    },
+    /**
+    * removing element(s) in the renderer queue
+    * @id 
+    **/        
+    find: function(param){
+      return this.elements[ param.id ];
+    },
+    /**
+    * launch an eternal event
+    * @id (not necessary)
+    * @event : event name
+    **/
+    bang: function(param){
+      if(!this.eventQ[param.event]){
+        this.eventQ[param.event] = {}; // create the event in the eventQ if doesen't exist yet
+      }      
+      if(typeof param.id === 'undefined' || param.id == null){ // we try to banged every objects
+        for(ind in this.elements){
+          var el = this.elements[ ind ];
+          if(el[ param.event ] && typeof el[ param.event ] === 'function'){ 
+            this.eventQ[param.event][el.id] = 0;        
+          }
+        }
+      }else if(this.elements[param.id] && this.elements[param.id][param.event]){
+        this.eventQ[param.event][param.id] = 0;
+      }
+      return __render(false, this);         
     },
     /**
     * proceed function : eventQ management 
@@ -293,14 +322,15 @@
     **/
     defautltDraw: function(param){
       if(param.elt && param.elt.mask){
+        this.context.strokeStyle = param.elt.stroke ? param.elt.stroke : 'black';
+        this.context.fillStyle = param.elt.fill ? param.elt.fill : 'black';
+        this.context.lineWidth = param.elt.strokeWeight ? param.elt.strokeWeight : 1;
         if(Object.prototype.toString.apply(param.elt.mask) === '[object Array]'){ // an array of points ; it's a shape
           this.context.beginPath();
-          this.context.strokeStyle = 'black';
           for(var i = 0; i < param.elt.mask.length; i++){
             this.context.lineTo(param.elt.mask[i].x, param.elt.mask[i].y);
           }
           this.context.closePath();
-          this.context.stroke();          
         } else if(typeof param.elt === 'object' 
                   && typeof param.elt.mask === 'object' 
                   && typeof param.elt.mask.radius === 'number' 
@@ -312,8 +342,9 @@
                               param.elt.mask.radius, 
                               0, Math.PI*2, true);
             this.context.closePath();  
-            this.context.stroke();          
         }
+        this.context.fill();  
+        this.context.stroke();
       }
       // chaining pattern
       return this;
@@ -366,6 +397,7 @@
     },
     /**
     * targetMouse function : check wich element the mouse is currently targeting
+    * @noparam
     */
     targetMouse: function(){
       var tt = [];
@@ -395,7 +427,7 @@
         this.eventQ.mousein[ this.hoveredId ] = 0;  // init with the step
         rend = true;  
       }
-      rend && render(false, this);
+      rend && __render(false, this);
     },
     /**
     * mouseout function
@@ -426,7 +458,7 @@
           rend = true;    
         }
       } 
-      rend && render(false, this);   
+      rend && __render(false, this);   
     },
     /**
     * drag function
@@ -444,7 +476,7 @@
         this.eventQ.drag[this.dragedId] = 0;
         rend = true;
       }
-      rend && render(false, this);
+      rend && __render(false, this);
     },
     /**
     * release function
@@ -453,11 +485,11 @@
     release: function(rend){
       var shape = this.elements[this.dragedId];
       if(shape.release){
-        this.eq.release[ this.dragedId ] = 0;  // init with the step
+        this.eventQ.release[ this.dragedId ] = 0;  // init with the step
         rend = true;
       }
       this.dragedId = ""; // erase the draggedId
-      rend && render(false, this); 
+      rend && __render(false, this); 
     },
     /**
     * click function
@@ -489,7 +521,7 @@
         }
         break;	  	  
       }
-      rend && render(false, this);
+      rend && __render(false, this);
     }   
   };
   // shortcut

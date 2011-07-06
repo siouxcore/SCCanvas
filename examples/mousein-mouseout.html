@@ -13,20 +13,20 @@ var param_init = {
 
 var param_add = {
   elt: {
-      color: 'red',
-      mask: {center: {x:200,y:200}, radius: 20},
-      mousein: function(step){ this.mask.radius = 20 + step; return step < 10;},
-      mouseout: function(){ this.mask.radius = 20;},
-      draw: function(c){
-        c.beginPath();
-        c.fillStyle = this.color;
-        c.arc(this.mask.center.x, 
-                  this.mask.center.y, 
-                  this.mask.radius, 
-                  0, Math.PI*2, true);
-        c.closePath();
-        c.fill();
-      }
+    color: 'red',
+    mask: {center: {x:200,y:200}, radius: 20},
+    mousein: function(step){ this.mask.radius = 20 + step; return step < 10;},
+    mouseout: function(){ this.mask.radius = 20;},
+    draw: function(c){
+      c.beginPath();
+      c.fillStyle = this.color;
+      c.arc(this.mask.center.x, 
+                this.mask.center.y, 
+                this.mask.radius, 
+                0, Math.PI*2, true);
+      c.closePath();
+      c.fill();
+    }
   }
 };
 
