@@ -15,7 +15,7 @@ var param_add = {
   elt: {
       color: 'red',
       mask: {center: {x:200,y:200}, radius: 20},
-      drag: function(step, s){ this.mask.center.x = s.mouseX; this.mask.center.y = s.mouseY;},
+      drag: function(step){ this.mask.center.x = SCC.mouseX; this.mask.center.y = SCC.mouseY;},
       draw: function(c){
         c.beginPath();
         c.fillStyle = this.color;

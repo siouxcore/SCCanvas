@@ -7,14 +7,8 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110706.2
-* change :  remove function : added
-*           find function : added
-*           bang function :added
-*           release function : correction
-*           __functions
-*           defaultDraw function : adding stroke & fill & strokeWeight management
-* change (2) : draw function : z sort           
+* version : 0.1.20110707.1
+* change : checking intersect function
 **/
 (function (){
 

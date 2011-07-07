@@ -80,21 +80,22 @@ for(ind in datas){
     }
   );
 }
-
+// growing animation
 SCC.init(param_init).add({elt:param_add}).bang({event: "grow"});
 
+// sorting management
 var count = 0;
-
 function sortDatas(){
 	datas.sort(function(a,b){ return count % 2 == 0 ? a.val - b.val : a.id - b.id });
 	count++;
 	for(ind in datas){
 		data = datas[ ind ];
 		var elt = SCC.find(data);
-		elt.difpos = marge + (ind * marge) + (ind * w_bar) - elt.mask[0].x;
+		elt.posx = elt.mask[0].x;
+    elt.nposx = marge + (ind * marge) + (ind * w_bar);
 		elt.sortEvent = function(step){
 			for(var i = 0; i < 4; i++){
-				this.mask[i].x += this.difpos / 50; 
+				this.mask[i].x = map(step, 0, 50, this.posx, this.nposx) + ((i == 1 || i == 2) ? w_bar : 0);
 			}
 			return step < 50;
 		};
