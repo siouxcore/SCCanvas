@@ -58,6 +58,7 @@ if the id is not defined in the bang parameter object, the event will be launch 
 <h4>available event functions parameters and return mechanism</h4>
 the only parameter you can use is <i>step</i>, the number of executions of your current event function since the event detection.
 The animation manager will continue to call it while it return true : 
+
 <code>
 click: function(){
 &nbsp;    this.color = 'black';
