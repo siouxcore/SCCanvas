@@ -61,7 +61,9 @@ The animation manager will continue to call it while it return true :
 
 <code>
 click: function(){
+
 &nbsp;    this.color = 'black';
+
 }
 </code>
 The first function will be executed just one time
