@@ -7,8 +7,10 @@
 *
 * SCUtil is a tiny util lib in JavaScript and inspired by processing & processing.js - siouxcore@gmail.com
 * SCUtil is under MIT license
-* version : 0.1.20110708.1
-* change : first version
+* version : 0.1.20110711.1
+* change :  intersection function : 2 functions merged in one
+*           linear : deleted and deported into animfunc.js
+*           stepin : correction for style function
 **/
 (function (){
 
@@ -17,12 +19,10 @@
     map: function(value, istart, istop, ostart, ostop){
       return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
     },
-    stepin: function(step, firststep, finalstep, startval, startstop, style){
-      var m = this.map(step, firsstep, finalstep, startval, startstop);
-      return typeof style === 'function' ? style( this.norm(m, startval, startstop) ) : m;
-    },
-    linear: function(x){
-      return x;
+    stepin: function(step, firststep, finalstep, startval, stopval, style){
+      return typeof style === 'function' 
+      ? this.map(style( this.norm(step, firststep, finalstep) ), 0, 1, startval, stopval ) 
+      : this.map(step, firststep, finalstep, startval, stopval);
     },
     constrain: function(aNumber, aMin, aMax){
       return aNumber > aMax ? aMax : aNumber < aMin ? aMin : aNumber;
@@ -74,27 +74,24 @@
     },
     /**
     * point : {x, y}
-    * shape : [ {x, y}, ... ]
+    * shape : polygon [ {x, y}, ... ] or circle 
     */
-    intersectPointShape: function(point, shape){
+    intersect: function(point, shape){
       // polygon mask
-      var c = false;
-      var j = shape.length - 1;
-      for(var i = 0; i < shape.length; j = i++){
-        if ((((shape[i].y <= point.y) && (point.y < shape[j].y)) ||
-             ((shape[j].y <= point.y) && (point.y < shape[i].y))) &&
-            (point.x < (shape[j].x - shape[i].x) * 
-            (point.y - shape[i].y) / (shape[j].y - shape[i].y) + shape[i].x))
-          c = !c;
+      if(Object.prototype.toString.apply(shape) === '[object Array]'){
+        var c = false;
+        var j = shape.length - 1;
+        for(var i = 0; i < shape.length; j = i++){
+          if ((((shape[i].y <= point.y) && (point.y < shape[j].y)) ||
+               ((shape[j].y <= point.y) && (point.y < shape[i].y))) &&
+              (point.x < (shape[j].x - shape[i].x) * 
+              (point.y - shape[i].y) / (shape[j].y - shape[i].y) + shape[i].x))
+            c = !c;
+        }
+        return c;
+      } else {
+        return (this.dist(point.x, point.y, circle.centre.x, circle.center.y) <= circle.radius); 
       }
-      return c;
-    },
-    /**
-    * point: { x, y }
-    * circle: {center: { x, y }, radius }
-    */
-    intersectPointCircle: function(point, circle){
-       return (this.dist(point.x, point.y, circle.centre.x, circle.center.y) <= circle.radius); 
     },
     random: function(){
       if(arguments.length === 0) {
