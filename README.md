@@ -162,6 +162,9 @@ TODO
 
 ---
 
+License
+---
+
 SCCanvas is licensed under the MIT license
 
 Permission is hereby granted, free of charge, to any person obtaining
