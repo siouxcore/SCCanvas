@@ -118,7 +118,7 @@ List of functions :
     * @istop : original end
     * @ostart : projected start
     * @ostop : projected end
-- stepin : is a map function with a style function parameter : allowing you to smooth your projection, check @ http://dev.siouxcore.com/animfunc
+- stepin : is a map function with a style function parameter : allowing you to smooth your projection, check @ http://dev.siouxcore.com/Animfunk
     * @step : current step
     * @fisrtstep : startint step
     * @finalstep : final step
