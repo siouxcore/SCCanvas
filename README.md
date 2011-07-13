@@ -1,13 +1,9 @@
 SCCanvas is a tiny framework for HTML5 canvas in JavaScript
 -----------------------------------------------------------
 
-
-
 The main goal of **SCC** is to provide an easy way to manipulate visual objects into a canvas.
 The event detection is in charge of the framework, you only need to implement an individual comportement with event functions into your objects.
 When **SCC** will detect an event, it will find the object impacted and launch its corresponding event function if it is defined. This allows to refresh the context only if necessary.
-
----
 
 Init
 ---
@@ -23,8 +19,6 @@ var param_init = {
 };
 SCC.init(param_init);
 ```
-
----
 
 Creating and adding objects
 ---
@@ -52,8 +46,6 @@ Thanks to chaining pattern, you can use **SCC** like this :
 ```javascript
 SCC.init(param_init).add(param_add).bang("grow");
 ```
-
----
 
 Event functions
 ---
@@ -98,25 +90,20 @@ mousein: function(s){
 
 The second function will be executed 20 times, so the radius of the object will grow during 20 * SCC.millisec
 
----
-
 Finding and deleting objects
 ---
 
 TODO
 
----
-
 Other SCC attributes and functions
 ---
+
 TODO
 
 - mouseX
 - mouseY
 - numrend
 - millisec
-
----
 
 Additional util library
 ---
@@ -159,8 +146,6 @@ Additional drawing library
 ---
 
 TODO
-
----
 
 License
 ---
