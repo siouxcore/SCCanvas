@@ -88,6 +88,7 @@ click: function(){
 ```
 
 The first function will be executed just one time
+
 ```javascript
 mousein: function(s){
   this.mask.radius += 1;
