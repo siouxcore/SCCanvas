@@ -48,6 +48,7 @@ param_add = {elt: myDatas};
 SCC.add( param_add );
 ```
 Thanks to chaining pattern, you can use **SCC** like this : 
+
 ```javascript
 SCC.init(param_init).add(param_add).bang("grow");
 ```
@@ -157,3 +158,6 @@ Additional drawing library
 ---
 
 TODO
+
+
+
