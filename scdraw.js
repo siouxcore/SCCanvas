@@ -7,8 +7,9 @@
 *
 * SCDraw is a tiny drawing lib in JavaScript for HTML5 canvas - siouxcore@gmail.com
 * SCDraw is under MIT license
-* version : 0.1.20110718.1
-* change : first version
+* version : 0.1.20110719.1
+* change :  stroke function : correction
+*           render function : correction 
 **/
 (function (){
   // SCDraw
@@ -21,11 +22,11 @@
       return this;
     },
     render: function(){
-      if(this.f){
-        this.c.fill();
-      }
       if(this.s){
         this.c.stroke();
+      }    
+      if(this.f){
+        this.c.fill();
       }
     },
     /**
@@ -99,7 +100,7 @@
     stroke: function(arg){
       this.s = true;
       this.c.strokeStyle = arg.style;
-      if(weight){
+      if(typeof arg.weight != 'undefined'){
         this.c.lineWidth = arg.weight;
       }
     },

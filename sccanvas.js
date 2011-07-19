@@ -7,8 +7,8 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110707.1
-* change : checking intersect function
+* version : 0.1.20110719.1
+* change : mask can now be a function
 **/
 (function (){
 
@@ -188,7 +188,7 @@
     *          z: depth (number) - not necessary (0 by default),
     *          color: color (object) - not necessary ({r:0, g:0, b:0} by default),
     *          id: identifier (string) - not necessary (will be set by SCC if not) but usefull if you want to refind your elt later
-    *          mask: (array || object {
+    *          mask: (array || object || function {
     *                                   radius, 
     *                                   center:{
     *                                           x, (number)
@@ -317,24 +317,25 @@
     **/
     defautltDraw: function(param){
       if(param.elt && param.elt.mask){
+        var mask = typeof param.elt.mask === 'function' ? param.elt.mask() : param.elt.mask;
         this.context.strokeStyle = param.elt.stroke ? param.elt.stroke : 'black';
         this.context.fillStyle = param.elt.fill ? param.elt.fill : 'black';
         this.context.lineWidth = param.elt.strokeWeight ? param.elt.strokeWeight : 1;
-        if(Object.prototype.toString.apply(param.elt.mask) === '[object Array]'){ // an array of points ; it's a shape
+        if(Object.prototype.toString.apply(mask) === '[object Array]'){ // an array of points ; it's a shape
           this.context.beginPath();
-          for(var i = 0; i < param.elt.mask.length; i++){
-            this.context.lineTo(param.elt.mask[i].x, param.elt.mask[i].y);
+          for(var i = 0; i < mask.length; i++){
+            this.context.lineTo(mask[i].x, mask[i].y);
           }
           this.context.closePath();
         } else if(typeof param.elt === 'object' 
-                  && typeof param.elt.mask === 'object' 
-                  && typeof param.elt.mask.radius === 'number' 
-                  && typeof param.elt.mask.center === 'object'){ // a circle
+                  && typeof mask === 'object' 
+                  && typeof mask.radius === 'number' 
+                  && typeof mask.center === 'object'){ // a circle
             this.context.beginPath();
             this.context.strokeStyle = 'black';
-            this.context.arc(param.elt.mask.center.x, 
-                              param.elt.mask.center.y, 
-                              param.elt.mask.radius, 
+            this.context.arc(mask.center.x, 
+                              mask.center.y, 
+                              mask.radius, 
                               0, Math.PI*2, true);
             this.context.closePath();  
         }
@@ -369,25 +370,26 @@
       if(shape.intersect && typeof shape["intersect"] === "function"){
         return shape.intersect(point);
       } else {  
-        // no mask defined
-        if(!shape.mask || shape.mask.length <= 0){  // no mask specified
+        if(shape.mask){
+          var mask = typeof shape.mask === 'function' ? shape.mask() : shape.mask;
+          // circle mask
+          if(mask.center && mask.radius){
+            return (this.dist(point.x, point.y, shape.mask.center.x, shape.mask.center.y) <= shape.mask.radius ); 
+          }
+          // polygon mask
+          var c = false,
+              j = mask.length - 1;
+          for(var i = 0; i < mask.length; j = i++){
+            if ((((mask[i].y <= point.y) && (point.y < mask[j].y)) ||
+                 ((mask[j].y <= point.y) && (point.y < mask[i].y))) &&
+                (point.x < (mask[j].x - mask[i].x) * 
+                (point.y - mask[i].y) / (mask[j].y - mask[i].y) + mask[i].x))
+              c = !c;
+          }
+          return c;                    
+        } else {
           return false;
         }
-        // circle mask
-        if(shape.mask.center && shape.mask.radius){
-          return (this.dist(point.x, point.y, shape.mask.center.x, shape.mask.center.y) <= shape.mask.radius ); 
-        }
-        // polygon mask
-        var c = false,
-            j = shape.mask.length - 1;
-        for(var i = 0; i < shape.mask.length; j = i++){
-          if ((((shape.mask[i].y <= point.y) && (point.y < shape.mask[j].y)) ||
-               ((shape.mask[j].y <= point.y) && (point.y < shape.mask[i].y))) &&
-              (point.x < (shape.mask[j].x - shape.mask[i].x) * 
-              (point.y - shape.mask[i].y) / (shape.mask[j].y - shape.mask[i].y) + shape.mask[i].x))
-            c = !c;
-        }
-        return c;
       }
     },
     /**
