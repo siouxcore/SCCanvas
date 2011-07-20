@@ -7,8 +7,10 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110719.1
-* change : mask can now be a function
+* version : 0.1.20110720.1
+* change : defaultDraw function : correction of the name
+*           rendering modification : (...) to check
+*           attr management in init method
 **/
 (function (){
 
@@ -110,7 +112,7 @@
         }
       }, c.millisec);
     }else{
-      return c.draw();
+      return c.eventQIsEmpty() ? c.draw() : c;
     }
   };  
   
@@ -171,6 +173,10 @@
           this.canvas.setAttribute('height', param.height.toString());
         if(param.millisec && typeof param.millisec === 'number')
           this.millisec = param.millisec;
+      }
+      // css-attributes
+      for(ind in param.attr){
+        this.canvas.setAttribute( ind, param.attr[ ind ] );
       }
       // event management
       __attach(this.canvas, "mousemove", __eventManager);
@@ -305,7 +311,7 @@
         if(sortedElements[ sortedId ].draw && typeof sortedElements[ sortedId ].draw === 'function'){
           sortedElements[ sortedId ].draw( this.context );
         } else {
-          this.defautltDraw( {elt: sortedElements[ sortedId ]} );
+          this.defaultDraw( {elt: sortedElements[ sortedId ]} );
         }
       }
       // chaining pattern return
@@ -315,7 +321,7 @@
     * default drawing functioin
     * @elt : an element
     **/
-    defautltDraw: function(param){
+    defaultDraw: function(param){
       if(param.elt && param.elt.mask){
         var mask = typeof param.elt.mask === 'function' ? param.elt.mask() : param.elt.mask;
         this.context.strokeStyle = param.elt.stroke ? param.elt.stroke : 'black';

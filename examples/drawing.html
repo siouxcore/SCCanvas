@@ -1,0 +1,92 @@
+<html>
+<head>
+<script type="text/javascript" src="../sccanvas.js"></script>
+<script type="text/javascript" src="../scutil.js"></script>
+<script type="text/javascript" src="../scdraw.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+// we just need a mouse draging catcher
+
+var manager = {
+  intersect: function(){ return true; }, // all the canvas area is dragable
+  drag: function(){
+    this.current.push( {x:SCC.mouseX, y: SCC.mouseY } );
+  },
+  release: function(){
+    this.figures.length > 20 && (this.figures.shift());
+    if(this.current.length > 1){
+      var fig = {
+        x: this.current[0].x,
+        y: this.current[0].y,
+        vec: []
+      };
+      for(var i = 1; i < this.current.length; i++){
+        fig.vec.push({
+          x: this.current[i].x - this.current[i-1].x,
+          y: this.current[i].y - this.current[i-1].y
+        });
+      }
+      this.figures.push(fig);
+    }
+    this.current = [];
+  },
+  draw: function(cont){
+    // we update figures
+    for(ind in this.figures){
+      var fig = this.figures[ind];
+      var vec = fig.vec[0]; // the first vector
+      fig.x += vec.x; fig.y += vec.y;
+      fig.x > 600 && (fig.x = 0);
+      fig.x < 0 && (fig.x = 600);
+      fig.y > 600 && (fig.y = 0);
+      fig.y < 0 && (fig.y = 600);          
+      // we add a new vec
+      fig.vec.shift();
+      fig.vec.push(vec);
+    }
+    // we draw the others
+    for(ind in this.figures){
+      var fig = this.figures[ ind ];
+      var pt = {x: fig.x, y: fig.y};
+      for(ind_vec in fig.vec){
+        cont.lineWidth = (fig.vec.length / 2 - Math.abs(fig.vec.length / 2 - ind_vec) ) / 3;
+        SCD.line({
+          point1: pt,
+          point2: SCU.translate(pt, fig.vec[ ind_vec ])
+        });
+        pt = SCU.translate(pt, fig.vec[ ind_vec ]);
+      }
+    } 
+    // we draw the current figure
+    cont.lineWidth = 1;
+    for(var i=0; i <this.current.length-1; i++){
+      SCD.line({ 
+      point1: this.current[i],
+      point2: this.current[i+1] 
+      });
+    }    
+  },
+  loop: function(){ return true; }, // we need this custom event to never stop context refereshing
+  figures: [],
+  current: []
+};
+
+// init parameters
+var param_init = {
+  id: "canvas-test",
+  width: 600,
+  height: 600,
+  millisec: 20,
+  attr: { style: "border: 1px solid #000;margin:10px;"}
+};
+
+SCC.init(param_init)
+SCD.init(SCC);
+SCC.add({elt:manager}).bang({event: 'loop'});
+
+</script>
+draw something in the canvas with your mouse - inspired by a processing sketch saw <a href="http://creativity-online.com/news/open-source-everything/137824">here</a>
+</body>
+</html>

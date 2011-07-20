@@ -2,6 +2,7 @@
 <head>
 <script type="text/javascript" src="../sccanvas.js"></script>
 <script type="text/javascript" src="../scutil.js"></script>
+<script type="text/javascript" src="../scdraw.js"></script>
 <!-- animfunc is an independant set of normalised animation functions, check @ http://github.com/siouxcore/animfunc -->
 <script>
 (function (){
@@ -32,7 +33,12 @@
     },        
     cosp2: function(x){
       return 1 - Math.cos(Math.pow(x,2) * Math.PI / 2);
-    },            
+    }, 
+    spring: function(x){
+      if(x < .5)
+        return Math.sin(x * Math.PI ) * 1.1;
+      return Math.sin(this.map(x,.5,1,Math.PI / 2, 6*Math.PI/2)) * this.map(x,.5,1,.1,.05) + 1;
+    },    
     map: function(value, istart, istop, ostart, ostop){
       return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
     }
@@ -99,7 +105,7 @@ for(ind in datas){
       grow: function(step){ // we need a function 
         // we want our bar to grow during 60 step
         //var ny = 500 - (step * this.val) / 60;
-        var ny = SCU.stepin(step, 0, 60, 500, 500-this.val, animfunc.cossq2);
+        var ny = SCU.stepin(step, 0, 60, 500, 500-this.val, animfunc.spring);
         this.mask[0].y = ny;
         this.mask[1].y = ny;
         return step != 60;

@@ -7,9 +7,8 @@
 *
 * SCDraw is a tiny drawing lib in JavaScript for HTML5 canvas - siouxcore@gmail.com
 * SCDraw is under MIT license
-* version : 0.1.20110719.1
-* change :  stroke function : correction
-*           render function : correction 
+* version : 0.1.20110720.1
+* change :   
 **/
 (function (){
   // SCDraw
@@ -81,10 +80,10 @@
     * @point2
     **/
     line: function(arg){
-      this.polygon([
+      this.polygon({mask:[
         arg.point1,
         arg.point2
-      ]);
+      ]});
     },
     /**
     * @style
