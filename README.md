@@ -15,7 +15,8 @@ var param_init = {
   id: "id-canvas",
   width: 600,
   height: 400,
-  millisec: 10
+  millisec: 10,
+  attr: { style: "border: 1px solid #000;margin:10px;"}
 };
 SCC.init(param_init);
 ```
