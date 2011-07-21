@@ -7,8 +7,10 @@
 *
 * SCUtil is a tiny util lib in JavaScript and inspired by processing & processing.js - siouxcore@gmail.com
 * SCUtil is under MIT license
-* version : 0.1.20110713.1
-* change : rotate and translate functions : the elt param can be either a point or an array of points
+* version : 0.2.20110721.1
+* change : v2 : custom shorten var name
+*               minus function
+*               rot instead of rotation, trans instead of translation
 **/
 (function (){
   // SCUtil
@@ -146,15 +148,16 @@
     * @arg1 : angle in radian
     * @arg2 : (not necessary) point, center of rotation, (0,0) if not specified
     **/
-    rotate: function(){
+    rot: function(){
       var elt = arguments[0];
       if(Object.prototype.toString.apply(elt) === '[object Array]'){
+        var ret = [];
         for(ind in elt){
-          elt[ ind ] = this.rotate( elt[ ind ], 
+          ret[ ind ] = this.rot( elt[ ind ], 
                 arguments[1], 
                 arguments[2] ? arguments[2] : {x: 0, y: 0} );
         }
-        return elt;
+        return ret;
       } else {
         var angle = arguments[1];
         var center = {x: 0, y: 0};
@@ -172,20 +175,29 @@
     * @elt : point or an array of point
     * @vec : vector of translation
     **/
-    translate: function(elt, vec){
+    trans: function(elt, vec){
       if(Object.prototype.toString.apply(elt) === '[object Array]'){
+        var ret = [];
         for(ind in elt){
-          elt[ ind ] = this.translate( elt[ ind ] );
+          ret[ ind ] = this.trans( elt[ ind ] );
         }
-        return elt;
+        return ret;
       } else {
         return {
           x: elt.x + vec.x,
           y: elt.y + vec.y
         };	
       }
+    },
+    minus: function(){
+      if(arguments.length === 1){
+        return {x: -arguments[0].x, y: -arguments[0].y};
+      } else if(arguments.length === 1){
+        return {x: arguments[0].x-arguments[1].x, y: arguments[0].y-arguments[1].y};
+      }
     }
   };
   // shortcut
-  if(!window.SCU){window.SCU = SCUtil;}
+  if(shortenSCUtil && !window[shortenSCUtil]){window[shortenSCUtil] = SCUtil;}
+  else{ window.SCU = SCUtil;}
 })();

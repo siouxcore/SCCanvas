@@ -1,5 +1,10 @@
 <html>
 <head>
+<script type="text/javascript">
+  var shortenSCCanvas = "C";
+  var shortenSCDraw = "D";
+  var shortenSCUtil = "U";
+</script>
 <script type="text/javascript" src="../sccanvas.js"></script>
 <script type="text/javascript" src="../scutil.js"></script>
 <script type="text/javascript" src="../scdraw.js"></script>
@@ -105,7 +110,7 @@ for(ind in datas){
       grow: function(step){ // we need a function 
         // we want our bar to grow during 60 step
         //var ny = 500 - (step * this.val) / 60;
-        var ny = SCU.stepin(step, 0, 60, 500, 500-this.val, animfunc.spring);
+        var ny = U.stepin(step, 0, 60, 500, 500-this.val, animfunc.spring);
         this.mask[0].y = ny;
         this.mask[1].y = ny;
         return step != 60;
@@ -128,7 +133,7 @@ for(ind in datas){
   );
 }
 // growing animation
-SCC.init(param_init).add({elt:param_add}).bang({event: "grow"});
+C.init(param_init).add({elt:param_add}).bang({event: "grow"});
 
 // sorting management
 var count = 0;
@@ -137,12 +142,12 @@ function sortDatas(){
 	count++;
 	for(ind in datas){
 		data = datas[ ind ];
-		var elt = SCC.find(data);
+		var elt = C.find(data);
 		elt.posx = elt.mask[0].x;
     elt.nposx = marge + (ind * marge) + (ind * w_bar);
 		elt.sortEvent = function(step){
 			for(var i = 0; i < 4; i++){
-        this.mask[i].x = SCU.stepin(step, 0, 50, this.posx, this.nposx, animfunc.sinsq) + ((i == 1 || i == 2) ? w_bar : 0);
+        this.mask[i].x = U.stepin(step, 0, 50, this.posx, this.nposx, animfunc.sinsq) + ((i == 1 || i == 2) ? w_bar : 0);
 			}
 			return step!=50;
 		};
@@ -151,6 +156,6 @@ function sortDatas(){
 
 </script>
 <p style="font-size:80px; position: absolute; top: 0; left: 350px;" id="val-bar"></p>
-<button onclick="sortDatas(); SCC.bang({event: 'sortEvent'});">sort data</button>
+<button onclick="sortDatas(); C.bang({event: 'sortEvent'});">sort data</button>
 </body>
 </html>

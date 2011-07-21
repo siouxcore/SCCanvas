@@ -1,5 +1,10 @@
 <html>
 <head>
+<script type="text/javascript">
+  var shortenSCCanvas = "C";
+  var shortenSCDraw = "D";
+  var shortenSCUtil = "U";
+</script>
 <script type="text/javascript" src="../sccanvas.js"></script>
 <script type="text/javascript" src="../scutil.js"></script>
 <script type="text/javascript" src="../scdraw.js"></script>
@@ -12,7 +17,7 @@
 var manager = {
   intersect: function(){ return true; }, // all the canvas area is dragable
   drag: function(){
-    this.current.push( {x:SCC.mouseX, y: SCC.mouseY } );
+    this.current.push( {x:C.mouseX, y: C.mouseY } );
   },
   release: function(){
     this.figures.length > 20 && (this.figures.shift());
@@ -52,20 +57,14 @@ var manager = {
       var pt = {x: fig.x, y: fig.y};
       for(ind_vec in fig.vec){
         cont.lineWidth = (fig.vec.length / 2 - Math.abs(fig.vec.length / 2 - ind_vec) ) / 3;
-        SCD.line({
-          point1: pt,
-          point2: SCU.translate(pt, fig.vec[ ind_vec ])
-        });
-        pt = SCU.translate(pt, fig.vec[ ind_vec ]);
+        D.line(pt,U.trans(pt, fig.vec[ ind_vec ]));
+        pt = U.trans(pt, fig.vec[ ind_vec ]);
       }
     } 
     // we draw the current figure
     cont.lineWidth = 1;
     for(var i=0; i <this.current.length-1; i++){
-      SCD.line({ 
-      point1: this.current[i],
-      point2: this.current[i+1] 
-      });
+      D.line(this.current[i],this.current[i+1]);
     }    
   },
   loop: function(){ return true; }, // we need this custom event to never stop context refereshing
@@ -82,9 +81,9 @@ var param_init = {
   attr: { style: "border: 1px solid #000;margin:10px;"}
 };
 
-SCC.init(param_init)
-SCD.init(SCC);
-SCC.add({elt:manager}).bang({event: 'loop'});
+C.init(param_init)
+D.init(C.context);
+C.add({elt:manager}).bang({event: 'loop'});
 
 </script>
 draw something in the canvas with your mouse - inspired by a processing sketch saw <a href="http://creativity-online.com/news/open-source-everything/137824">here</a>

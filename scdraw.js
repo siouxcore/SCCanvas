@@ -7,8 +7,11 @@
 *
 * SCDraw is a tiny drawing lib in JavaScript for HTML5 canvas - siouxcore@gmail.com
 * SCDraw is under MIT license
-* version : 0.1.20110720.1
-* change :   
+* version : 0.2.20110721.1
+* change : v0.2 : custom shorten var name added
+*                 parameters
+*                 donut & circle functions
+*                 rectangle heigth param non necessary
 **/
 (function (){
   // SCDraw
@@ -16,8 +19,8 @@
     f: true,
     s: true,
     c: undefined,
-    init: function(arg){
-      this.c = arg.context;
+    init: function(context){
+      this.c = context;
       return this;
     },
     render: function(){
@@ -31,76 +34,83 @@
     /**
     * @mask : array of points
     **/
-    polygon: function(arg){
+    polygon: function(mask){
       this.c.beginPath();
-      for(var i = 0; i < arg.mask.length; i++){
-        this.c.lineTo(arg.mask[i].x, arg.mask[i].y);
+      for(var i = 0; i < mask.length; i++){
+        this.c.lineTo(mask[i].x, mask[i].y);
       }
       this.c.closePath();
       this.render();
     },
     /**
     * @center
-    * @radius1 : by default 0
-    * @radius2
-    * @angle1 : by default 0
-    * @angle2 : by default 2*PI
+    * @r1 
+    * @r2
+    * @a1 
+    * @a2 
     * @ccw : by default true
     **/
-    arc: function(arg){
-      var center = arg.center;
-      var radius1 = typeof arg.radius1 === 'number' ? arg.radius1 : 0;
-      var radius2 = arg.radius2;
-      var angle1 = typeof arg.angle1 === 'number' ? arg.angle1 : 0;
-      var angle2 = typeof arg.angle2 === 'number' ? arg.angle2 : 2 * Math.PI;
-      var ccw = typeof arg.ccw === 'boolean' ? arg.ccw : true;
-      
+    arc: function(center, r1, r2, a1, a2, ccw){
+      var rot = typeof ccw === 'boolean' ? ccw : true;
       this.c.beginPath();
-      this.c.arc(center.x, center.y, radius2, angle1,angle2,ccw);
-      this.c.lineTo(center.x + Math.cos(angle2) * radius1,center.y + Math.sin(angle2) * radius1);
-      this.c.arc(center.x,center.y,radius1,angle2,angle1,!ccw);
+      this.c.arc(center.x, center.y, r2, a1,a2,rot);
+      this.c.lineTo(center.x + Math.cos(a2) * ra1,center.y + Math.sin(a2) * r1);
+      this.c.arc(center.x,center.y,r1,a2,a1,!rot);
       this.c.closePath();
       this.render();
     },
     /**
+    * @center
+    * @r1 
+    * @r2
+    **/
+    donut: function(center, r1, r2){
+      this.arc(center, r1, r2, 0, Math.PI*2);
+    },
+    /**
+    * @center
+    * @radius
+    **/
+    circle: function(center, radius){
+      this.arc(center, 0, radius, 0, Math.PI*2);
+    },
+    /**
     * @point
     * @width
-    * @height
+    * @height = width if not specified
     **/
-    rectangle: function(arg){
+    rectangle: function(point, width, height){
+      var h = typeof height !== 'undefined' ? height : width;
       this.polygon([
-        {x: arg.point.x, y: arg.point.y},
-        {x: arg.point.x + arg.width, y: arg.point.y},
-        {x: arg.point.x + arg.width, y: arg.point.y + arg.height},
-        {x: arg.point.x, y: arg.point.y + arg.height},
+        {x: point.x, y: point.y},
+        {x: point.x + width, y: point.y},
+        {x: point.x + width, y: point.y + h},
+        {x: point.x, y: point.y + h},
       ]);
     },
     /**
-    * @point1
-    * @point2
+    * @pt1
+    * @pt2
     **/
-    line: function(arg){
-      this.polygon({mask:[
-        arg.point1,
-        arg.point2
-      ]});
+    line: function(pt1, pt2){
+      this.polygon([pt1,pt2]);
     },
     /**
     * @style
     **/
-    fill: function(arg){ // "rgba(255, 255, 0, .5)"
+    fill: function(style){ // "rgba(255, 255, 0, .5)"
       this.f = true;
-      this.c.fillStyle = arg.style;
+      this.c.fillStyle = style;
     },
     /**
     * @style
     * @weight
     **/
-    stroke: function(arg){
+    stroke: function(style, weight){
       this.s = true;
-      this.c.strokeStyle = arg.style;
-      if(typeof arg.weight != 'undefined'){
-        this.c.lineWidth = arg.weight;
+      this.c.strokeStyle = style;
+      if(typeof weight === 'number'){
+        this.c.lineWidth = weight;
       }
     },
     /**
@@ -115,10 +125,11 @@
     /**
     * @weight
     **/
-    strokeWeight: function(arg){
-      this.c.lineWidth = arg.weight;
+    strokeWeight: function(weight){
+      this.c.lineWidth = weight;
     }   
   };
   // shortcut
-  if(!window.SCD){window.SCD = SCDraw;}
+  if(shortenSCDraw && !window[shortenSCDraw]){window[shortenSCDraw] = SCDraw;}
+  else{ window.SCD = SCDraw;}
 })();

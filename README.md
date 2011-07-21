@@ -105,6 +105,8 @@ TODO
 - mouseY
 - numrend
 - millisec
+- width
+- height
 
 Additional util library
 ---
@@ -135,13 +137,16 @@ List of functions :
     * @point : {x, y}
     * @shape : polygon [ {x, y}, ... ] or circle 
 - random
-- rotate : 
+- rot : 
     * @arg0 : a point or an array of point to rotate
     * @arg1 : angle in radian
     * @arg2 : (not necessary) point, center of rotation, (0,0) if not specified
-- translate
+- trans
     * @elt : point or an array of point
     * @vec : vector of translation
+- minus
+	* @arg1 : vector
+	* @arg2 : (not necessary) vector, if present return arg1 - arg2, else -arg1 
 
 Additional drawing library
 ---

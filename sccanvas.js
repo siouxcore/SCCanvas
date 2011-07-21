@@ -7,10 +7,9 @@
 *
 * SCCanvas is a tiny framework for HTML5.canvas in javascript - siouxcore@gmail.com
 * SCCanvas is under MIT license
-* version : 0.1.20110720.1
-* change : defaultDraw function : correction of the name
-*           rendering modification : (...) to check
-*           attr management in init method
+* version : 0.2.20110721.1
+* change : v2 version
+*             printscreen, width, height, attr param in init function
 **/
 (function (){
 
@@ -145,6 +144,8 @@
     hoveredId: "",
     dragedId: "",
     rendering: false,
+    width: 0,
+    height: 0,
     /**
     * init function
     * @id : id of the canvas (string)
@@ -173,6 +174,8 @@
           this.canvas.setAttribute('height', param.height.toString());
         if(param.millisec && typeof param.millisec === 'number')
           this.millisec = param.millisec;
+        this.width = parseInt(this.canvas.getAttribute('width'));
+        this.height = parseInt(this.canvas.getAttribute('height'));
       }
       // css-attributes
       for(ind in param.attr){
@@ -525,8 +528,12 @@
         break;	  	  
       }
       rend && __render(false, this);
-    }   
+    },
+    printscreen: function(){
+    
+    }
   };
   // shortcut
-  if(!window.SCC){window.SCC = SCCanvas;}
+  if(shortenSCCanvas && !window[shortenSCCanvas]){window[shortenSCCanvas] = SCCanvas;}
+  else{ window.SCC = SCCanvas;}
 })();
